@@ -26,6 +26,7 @@ def create_tables(db):
             person_address VARCHAR(100) NOT NULL,
             person_passport VARCHAR(11) NOT NULL,
             client_id INT NOT NULL,
+            edit_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY `p_client_id`(client_id) REFERENCES Client(client_id)
             ON UPDATE CASCADE ON DELETE CASCADE,
             INDEX Index_Person (person_id),
@@ -39,20 +40,39 @@ def create_tables(db):
             org_inn VARCHAR(10) NOT NULL,
             foundation_date DATE NOT NULL,
             client_id INT NOT NULL,
+            edit_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY `o_client_id`(client_id) REFERENCES Client(client_id)
             ON UPDATE CASCADE ON DELETE CASCADE,
             INDEX Index_Org (org_id),
             INDEX Index_OClient (client_id))"""
         cur.execute(sql)
 
+        sql = """CREATE TABLE IF NOT EXISTS Deposit(
+            deposit_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            balance FLOAT NOT NULL,
+            rate FLOAT NOT NULL,
+            status VARCHAR(10),
+            open_date date not null,
+            client_id INT NOT NULL,
+            branch_id INT NOT NULL,
+            edit_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY `d_client_id`(client_id) REFERENCES Client(client_id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY `d_branch_id`(branch_id) REFERENCES Branch(branch_id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+            INDEX Index_Deposit (deposit_id),
+            INDEX Index_DBranch (branch_id),
+            INDEX Index_DClient (client_id))"""
+        cur.execute(sql)
+
         sql = """CREATE TABLE IF NOT EXISTS Account(
             account_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             balance FLOAT NOT NULL,
             rate FLOAT NOT NULL,
-            account_type VARCHAR(10),
             status VARCHAR(10),
             client_id INT NOT NULL,
             branch_id INT NOT NULL,
+            edit_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY `a_client_id`(client_id) REFERENCES Client(client_id)
             ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY `a_branch_id`(branch_id) REFERENCES Branch(branch_id)
@@ -71,6 +91,7 @@ def create_tables(db):
             loan_rest FLOAT NOT NULL,
             loan_rate FLOAT NOT NULL,
             client_id INT NOT NULL,
+            edit_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY `l_client_id`(client_id) REFERENCES Client(client_id)
             ON UPDATE CASCADE ON DELETE CASCADE,
             INDEX Index_Loan (loan_id),
